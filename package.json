@@ -1,0 +1,116 @@
+{
+  "_from": "nemo-runner@latest",
+  "_id": "nemo-runner@1.5.0-alpha.2",
+  "_inBundle": false,
+  "_integrity": "sha512-8vCUUyBRuquf4vvwx7uu94kJqU6Mw9OqZ0aDBO/O0a2HLM1moWradRxLW5MMAUJDRfZVIkf7+mgkYj1jzL0xZA==",
+  "_location": "/nemo-runner",
+  "_phantomChildren": {
+    "browser-stdout": "1.3.0",
+    "escape-string-regexp": "1.0.5",
+    "fs.realpath": "1.0.0",
+    "graceful-readlink": "1.0.1",
+    "he": "1.1.1",
+    "inflight": "1.0.6",
+    "inherits": "2.0.3",
+    "json3": "3.3.2",
+    "lodash": "4.17.4",
+    "lodash.create": "3.1.1",
+    "minimatch": "3.0.4",
+    "mkdirp": "0.5.1",
+    "ms": "2.0.0",
+    "once": "1.4.0",
+    "path-is-absolute": "1.0.1"
+  },
+  "_requested": {
+    "type": "tag",
+    "registry": true,
+    "raw": "nemo-runner@latest",
+    "name": "nemo-runner",
+    "escapedName": "nemo-runner",
+    "rawSpec": "latest",
+    "saveSpec": null,
+    "fetchSpec": "latest"
+  },
+  "_requiredBy": [
+    "#DEV:/",
+    "#USER"
+  ],
+  "_resolved": "https://npm.paypal.com/repository/npm-all/nemo-runner/-/nemo-runner-1.5.0-alpha.2.tgz",
+  "_shasum": "4a98babc7d8c8cadf3207ba3ec9073c3993a543e",
+  "_spec": "nemo-runner@latest",
+  "_where": "C:\\Users\\sonkoba\\Paypal\\p2pnodeweb",
+  "author": {
+    "name": "grawk",
+    "email": "mattedelman@gmail.com"
+  },
+  "bin": {
+    "nemo-runner": "./bin/nemo-runner",
+    "_nemo-runner": "./bin/_nemo-runner"
+  },
+  "bugs": {
+    "url": "https://github.com/grawk/nemo-runner/issues"
+  },
+  "bundleDependencies": false,
+  "contributors": [
+    {
+      "name": "grawk",
+      "email": "mattedelman@gmail.com"
+    },
+    {
+      "name": "Kurt Weiberth",
+      "email": "kurt.weiberth@gmail.com"
+    },
+    {
+      "name": "Ethan Godt",
+      "email": "ethan@ethangodt.com"
+    }
+  ],
+  "dependencies": {
+    "async": "^2.5.0",
+    "bluebird": "^3.5.0",
+    "commander": "^2.9.0",
+    "debug": "^2.6.3",
+    "filenamify": "^2.0.0",
+    "glob": "^7.1.1",
+    "lodash.merge": "^4.6.0",
+    "mocha": "^3.2.0",
+    "mochawesome": "^2.3.1",
+    "moment": "^2.19.2",
+    "threads": "^0.7.2",
+    "uuid": "^3.1.0"
+  },
+  "deprecated": false,
+  "description": "Wrapper to run nemo/mocha suites",
+  "devDependencies": {
+    "eslint": "^3.19.0",
+    "eslint-plugin-es6-recommended": "^0.1.2",
+    "nemo": "^2.4.1",
+    "nemo-view": "^2.2.3"
+  },
+  "homepage": "https://github.com/grawk/nemo-runner#readme",
+  "keywords": [
+    "nemo",
+    "mocha",
+    "selenium",
+    "parallel"
+  ],
+  "license": "Apache-2.0",
+  "main": "index.js",
+  "name": "nemo-runner",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/paypal/nemo-runner.git"
+  },
+  "scripts": {
+    "lint": "eslint ./bin/* ./lib/*",
+    "nemo": "DEBUG=nemo-runner* ./bin/nemo-runner -B test -G @suite1",
+    "nemo:debug": "DEBUG=nemo-runner ./bin/nemo-runner -B test -G @suite1 --debug-brk --inspect",
+    "nemo:parallel": "DEBUG=nemo-runner* ./bin/nemo-runner -B test -G @suite1,@suite2,@suite3,@suite4,@suitex -P chrome,firefox",
+    "nemo:parallel:data": "DEBUG=nemo-runner* ./bin/nemo-runner -B test -P search,pay -D",
+    "nemo:pay": "DEBUG=nemo-runner* ./bin/nemo-runner -B test -P pay -D",
+    "nemo:search": "DEBUG=nemo-runner* ./bin/nemo-runner -B test -P search -D",
+    "nemo:xunit": "DEBUG=nemo-runner* ./bin/nemo-runner -B test -G @suite1 -P xunit",
+    "test": "npm run lint && npm run nemo"
+  },
+  "version": "1.5.0-alpha.2"
+}
