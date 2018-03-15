@@ -4,20 +4,25 @@ var Util = require('localizedtestdata');
 
 
 const readFile = require('./fileHandler.js').readFileSynchronously;
-
+const allLocales = require('./locales')
 
 const setupUser = (user, localeData, locale) => {
-    let country = localeData.hasOwnProperty('locale') ? localeData.locale.split('_')[1] : locale.split('_')[1];
+
+    let country = localeData.hasOwnProperty('locale') ?
+        (allLocales.hasOwnProperty(localeData.locale) ? allLocales[localeData.locale].country : console.log('\n\n Locale ' + locale + ' was not found \n\n')) :
+        (allLocales.hasOwnProperty(locale) ? allLocales[locale].country : console.log('\n\n Locale ' + locale + ' was not found \n\n'));
+
     let defaultUser = {};
     defaultUser.country = country;
     Object.assign(defaultUser, user);
     let bank = {};
-    defaultUser.currency = localeData.currency || defaultUser.currency;
+    let funds = Util.getFund(country);
+    defaultUser.currency = localeData.currency || funds.currency;
     defaultUser.bankaccounts = localeData.bankaccounts || [bank = Util.getBank(country)];
     if (!bank) {
         delete defaultUser.bankaccounts;
     }
-    defaultUser.funds = localeData.funds || [Util.getFund(country)];
+    defaultUser.funds = localeData.funds || [funds];
     defaultUser.creditcards = localeData.creditcards || [
         Util.getCreditCard(country)
     ];
@@ -25,6 +30,7 @@ const setupUser = (user, localeData, locale) => {
     defaultUser.type = localeData.type || defaultUser.type;
     defaultUser.firstName = localeData.firstName || Util.getFirstName(country);
     defaultUser.lastName = localeData.lastName || Util.getLastName(country);
+    defaultUser.preferredLanguage = localeData.preferredLanguage || allLocales[defaultUser.locale].language;
     if (defaultUser.type.toLowerCase() === 'BUSINESS'.toLowerCase()) {
         defaultUser.businessType =
             localeData.biztype || Util.getBusinessType(country);
@@ -40,7 +46,7 @@ const setupUser = (user, localeData, locale) => {
  * The test data provider utility
  */
 
-const getLocalizedTestData = testData => {
+const getLocalizedTestData = (testData, urls) => {
     let allLocales = testData.locales || {};
     let testsArray = {};
     if (Object.keys(allLocales).length <= 0) {
@@ -51,8 +57,8 @@ const getLocalizedTestData = testData => {
         let tests = JSON.parse(JSON.stringify(testData.default));
         let localeData = allLocales[multilocales];
         tests.locale = localeData.locale || tests.locale;
-        tests.baseUrl = localeData.baseUrl || tests.baseUrl;
-        tests.productUrl = localeData.productUrl || tests.productUrl;
+        tests.baseUrl = tests.baseUrl || urls.baseUrl;
+        tests.productUrl = tests.productUrl || urls.productUrl;
 
         // setup default sender and receiver
         tests.sender = {};
@@ -67,7 +73,7 @@ const getLocalizedTestData = testData => {
         tests.sender.funds = tests.receiver.funds = [];
         tests.sender.creditcards = tests.receiver.creditcards = [];
         tests.sender.bankaccounts = tests.receiver.bankaccounts = [];
-
+        tests.sender.preferredLanguage = tests.receiver.preferredLanguage = 'en_US';
 
         let locales = [];
         locales = multilocales.split(",");
@@ -77,7 +83,7 @@ const getLocalizedTestData = testData => {
             tempTests.sender = setupUser(tests.sender, localeData.sender, locale);
             tempTests.receiver = setupUser(tests.receiver, localeData.receiver, locale);
             testsArray[localeData.locale || locale] = {};
-            Object.assign(testsArray[localeData.locale || locale],tempTests);
+            Object.assign(testsArray[localeData.locale || locale], tempTests);
         })
 
 
@@ -96,10 +102,17 @@ const getLocalizedTestData = testData => {
  *
  *  getTestsData("test_amount_property_file",'bizwalletnodeweb/transferMoney.json')
  */
-const getTestsData = (testCaseName, dataProviderFile) => {
-    let testData = JSON.parse(
-        readFile(dataProviderFile)
-    );
+const getTestsData = (testCaseName, dataProviderFile, urls) => {
+    let testData = {}
+    try {
+        testData = JSON.parse(
+            readFile(dataProviderFile));
+    } catch (error) {
+        console.log(error)
+    } finally {
+        console.error("\n Error in file " + dataProviderFile + "\n")
+    }
+
     let testName = dataProviderFile.replace(/^.*[\\\/]/, '').replace('.json', '');
     let testDescription = testData[testCaseName] || {};
     if (Object.keys(testDescription).length <= 0) {
@@ -107,7 +120,7 @@ const getTestsData = (testCaseName, dataProviderFile) => {
         return;
     }
     testDescription.testName = testName;
-    return getLocalizedTestData(testDescription);
+    return getLocalizedTestData(testDescription, urls);
 };
 
 /*
@@ -120,10 +133,17 @@ const getTestsData = (testCaseName, dataProviderFile) => {
  *
  *  getTestsData("test_amount_property_file",'bizwalletnodeweb/transferMoney.json',['US','FR'])
  */
-const getTestsDataByCountry = (testCaseName, dataProviderFile, locales) => {
-    let testData = JSON.parse(
-        readFile(dataProviderFile)
-    );
+const getTestsDataByCountry = (testCaseName, dataProviderFile, locales, urls) => {
+    let testData = {}
+    try {
+        testData = JSON.parse(
+            readFile(dataProviderFile));
+    } catch (error) {
+        console.log(error)
+    } finally {
+        console.error("\n Error in file " + dataProviderFile + "\n")
+    }
+
     let testName = dataProviderFile.replace(/^.*[\\\/]/, '').replace('.json', '');
     let testDescription = testData[testCaseName] || {};
     if (Object.keys(testDescription).length <= 0) {
@@ -145,7 +165,7 @@ const getTestsDataByCountry = (testCaseName, dataProviderFile, locales) => {
     });
 
 
-    return getLocalizedTestData(testDescription);
+    return getLocalizedTestData(testDescription, urls);
 };
 
 module.exports = {

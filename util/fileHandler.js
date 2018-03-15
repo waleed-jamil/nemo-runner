@@ -59,6 +59,53 @@ const readFiles = (exports.readFiles = function (dir, files_) {
     return files_
 })
 
+/* This method can be used to read the content of a list of files in a given directory and its subdirectory.
+ * @param  {string}  dir     The directory whose file path need to be retrieved.
+ * @return {JSON Array}           A string Array of the content of each file in a given directory and subdirectory
+ */
+const readTestCaseFiles = (exports.readTestCaseFiles = function (dir, files_) {
+    files_ = files_ || []
+    let files = fs.readdirSync(dir)
+    for (let i in files) {
+        let name = dir + '/' + files[i]
+        if (fs.statSync(name).isDirectory()) {
+            readTestCaseFiles(name, files_)
+        } else {
+
+            let content = readFileSynchronously(name);
+
+            if (name.includes('.js') && name.includes('flow/') && content.includes('describe')) {
+                let testContent = {};
+                testContent['content'] = content;
+                testContent['fileName'] = name.replace(/^.*[\\\/]/, '').replace('.js', '');
+                files_.push(testContent)
+            }
+
+        }
+
+    }
+    return files_
+})
+
+
+/* This method can be used to read a file synchronously.
+ * @param  {string}  filepath  The file path of the file to be read.
+ * @return {String}            A String representation of the contents read from the file.
+ */
+const readTestFile = (exports.readTestFile = function (filepath) {
+    let data = fs.readFileSync(filepath, 'utf8')
+
+    let content = {};
+
+    if (filepath.includes('.js') && filepath.includes('flow/') && data.includes('describe')) {
+        content['content'] = data;
+        content['fileName'] = filepath.replace(/^.*[\\\/]/, '').replace('.js', '')
+        return content;
+    } else {
+        console.log('please Select an appropriate test JS file')
+        return data;
+    }
+})
 
 
 /* This method can be used to read a file synchronously.
